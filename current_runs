@@ -1,0 +1,15 @@
+Currently running or complete:
+
+Runset1
+=====================
+Hopper
+------
+batch_size = 1000,5000,25000
+reg_coef = .01, .001
+
+HalfCheetah
+------
+
+Runset2-5
+================
+Need to repeat

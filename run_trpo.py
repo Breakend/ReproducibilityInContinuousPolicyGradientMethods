@@ -81,7 +81,7 @@ run_experiment_lite(
     # Number of parallel workers for sampling
     n_parallel=1,
     # Only keep the snapshot parameters for the last iteration
-    snapshot_mode="last",
+    snapshot_mode="none",
     # Specifies the seed for the experiment. If this is not provided, a random seed
     # will be used
     exp_prefix=pref,

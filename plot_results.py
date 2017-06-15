@@ -34,16 +34,19 @@ def single_plot(average_vals, std_dev, env_name, smoothing_window=5, no_show=Fal
 
 def multiple_plot(average_vals_list, std_dev_list, other_labels, env_name, smoothing_window=5, no_show=False, ignore_std=False, limit=None):
     fig = plt.figure(figsize=(15, 10))
-    colors = ["aqua", "black", "blue", "fuchsia", "gray", "green", "lime", "maroon", "navy", "olive", "purple", "red", "silver", "teal", "yellow"]
+    colors = ["k", "red", "blue", "green", "magenta", "cyan"]
+    color_index = 0
 
     for average_vals, std_dev, label in zip(average_vals_list, std_dev_list, other_labels):
         rewards_smoothed_1 = pd.Series(average_vals).rolling(smoothing_window, min_periods=smoothing_window).mean()[:limit]
         if limit is None:
             limit = len(rewards_smoothed_1)
         rewards_smoothed_1 = rewards_smoothed_1[:limit]
+        std_dev = std_dev[:limit]
 
-        cum_rwd_1, = plt.plot(range(len(rewards_smoothed_1)), rewards_smoothed_1, label=label)[:limit]
-        fill_color = choice(colors, 1)
+        fill_color = colors[color_index]#choice(colors, 1)
+        color_index += 1
+        cum_rwd_1, = plt.plot(range(len(rewards_smoothed_1)), rewards_smoothed_1, label=label, color=fill_color[0])
         if not ignore_std:
             plt.fill_between(range(len(rewards_smoothed_1)), rewards_smoothed_1 + std_dev,   rewards_smoothed_1 - std_dev, alpha=0.3, edgecolor=fill_color, facecolor=fill_color)
 

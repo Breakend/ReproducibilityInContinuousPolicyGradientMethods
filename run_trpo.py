@@ -28,10 +28,11 @@ parser.add_argument("--network_architecture", default=[100,50,25], type=int, nar
 parser.add_argument("--data_dir", default="./data/")
 parser.add_argument("--use_ec2", action="store_true", help="Use your ec2 instances if configured")
 parser.add_argument("--dont_terminate_machine", action="store_false", help="Whether to terminate your spot instance or not. Be careful.")
+parser.add_argument("--random_seed", default=1, type=int)
 args = parser.parse_args()
 
 stub(globals())
-#ext.set_seed(1)
+ext.set_seed(args.random_seed)
 
 supported_gym_envs = ["MountainCarContinuous-v0", "InvertedPendulum-v1", "InvertedDoublePendulum-v1", "Hopper-v1", "Walker2d-v1", "Humanoid-v1", "Reacher-v1", "HalfCheetah-v1", "Swimmer-v1", "HumanoidStandup-v1"]
 
@@ -39,12 +40,10 @@ other_env_class_map  = { "Cartpole" :  CartpoleEnv}
 
 if args.env in supported_gym_envs:
     gymenv = GymEnv(args.env, force_reset=True, record_video=False, record_log=False)
-    # gymenv.env.seed(1)
 else:
     gymenv = other_env_class_map[args.env]()
 
 #TODO: assert continuous space
-
 
 env = TfEnv(normalize(gymenv))
 
@@ -74,7 +73,7 @@ algo = TRPO(
 )
 
 arch_name="_".join([str(x) for x in args.network_architecture])
-pref = "TRPO_" + args.env + "_bs_" + str(args.batch_size) + "_sp_" + str(args.step_size) + "_regc_" + str(args.reg_coeff) + "_gael_" + str(args.gae_lambda) + "_na_" + arch_name 
+pref = "TRPO_" + args.env + "_bs_" + str(args.batch_size) + "_sp_" + str(args.step_size) + "_regc_" + str(args.reg_coeff) + "_gael_" + str(args.gae_lambda) + "_na_" + arch_name + "_seed_" + str(args.random_seed)
 pref = pref.replace(".", "_")
 print("Using prefix %s" % pref)
 
@@ -88,7 +87,7 @@ run_experiment_lite(
     # Specifies the seed for the experiment. If this is not provided, a random seed
     # will be used
     exp_prefix=pref,
-    seed=1,
+    seed=args.random_seed,
     mode="ec2" if args.use_ec2 else "local",
     plot=False,
     # dry=True,

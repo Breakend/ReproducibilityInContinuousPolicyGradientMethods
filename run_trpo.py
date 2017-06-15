@@ -24,7 +24,7 @@ parser.add_argument("--batch_size", default=5000, type=int)
 parser.add_argument("--step_size", default=0.01, type=float)
 parser.add_argument("--reg_coeff", default=1e-5, type=float)
 parser.add_argument("--gae_lambda", default=1.0, type=float)
-
+parser.add_argument("--network_architecture", default=[100,50,25], type=int, nargs='*')
 parser.add_argument("--data_dir", default="./data/")
 parser.add_argument("--use_ec2", action="store_true", help="Use your ec2 instances if configured")
 parser.add_argument("--dont_terminate_machine", action="store_false", help="Whether to terminate your spot instance or not. Be careful.")
@@ -48,12 +48,13 @@ else:
 
 env = TfEnv(normalize(gymenv))
 
+print("Using network arch: %s" % ", ".join([str(x) for x in args.network_architecture]))
 
 policy = GaussianMLPPolicy(
 name="policy",
 env_spec=env.spec,
 # The neural network policy should have two hidden layers, each with 32 hidden units.
-hidden_sizes=(100, 50, 25),
+hidden_sizes=tuple([int(x) for x in args.network_architecture]),
 hidden_nonlinearity=tf.nn.relu,
 )
 
@@ -72,8 +73,10 @@ algo = TRPO(
     optimizer=ConjugateGradientOptimizer(reg_coeff=args.reg_coeff, hvp_approach=FiniteDifferenceHvp(base_eps=args.reg_coeff))
 )
 
-pref = "TRPO_" + args.env + "_bs_" + str(args.batch_size) + "_step_" + str(args.step_size) + "_regcoeff_" + str(args.reg_coeff) + "_gae_lambda_" + str(args.gae_lambda)
+arch_name="_".join([str(x) for x in args.network_architecture])
+pref = "TRPO_" + args.env + "_bs_" + str(args.batch_size) + "_sp_" + str(args.step_size) + "_regc_" + str(args.reg_coeff) + "_gael_" + str(args.gae_lambda) + "_na_" + arch_name 
 pref = pref.replace(".", "_")
+print("Using prefix %s" % pref)
 
 run_experiment_lite(
     algo.train(),

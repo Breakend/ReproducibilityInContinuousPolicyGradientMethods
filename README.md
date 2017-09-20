@@ -12,6 +12,8 @@ reproducibility of reported results. We provide guidelines on reporting novel re
 as comparisons against baseline methods such that future researchers can make
 informed decisions when investigating novel methods.
 
+## Citation
+
 ```
 @article{islam2017reproducibility,
   title={Reproducibility of Benchmarked Deep Reinforcement Learning Tasks for Continuous Control},
@@ -21,3 +23,7 @@ informed decisions when investigating novel methods.
   url={https://arxiv.org/pdf/1708.04133.pdf}
 }
 ```
+
+## References
+
+Here, we use the <a href="https://github.com/rll/rllab">rllab implementation</a> of various benchmark algorithms.
